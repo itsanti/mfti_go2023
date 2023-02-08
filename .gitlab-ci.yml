@@ -1,0 +1,11 @@
+image: golang:latest
+
+stages:
+  - test
+
+unit_tests:
+  stage: test
+  script:
+    - go test ./...
+  rules:
+    if: $CI_COMMIT_BRANCH =~ /^homework/

@@ -12,4 +12,4 @@
 6. Написать код домашнего задания
 7. Запустить тесты локально
 8. Создать коммит: `git commit -m "my homework"`
-9. Залить ветку в форк: `git push -u origin homework/*`
+9. Обновить ветку в своем форке: `git push -u origin homework/*`

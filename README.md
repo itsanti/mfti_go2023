@@ -11,5 +11,5 @@
 5. Переключиться в нужную ветку: `git switch homework/*`
 6. Написать код домашнего задания
 7. Запустить тесты локально
-8. Создать коммит: `git commit - m "my homework"`
+8. Создать коммит: `git commit -m "my homework"`
 9. Залить ветку в форк: `git push -u origin homework/*`

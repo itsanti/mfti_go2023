@@ -6,6 +6,7 @@ stages:
 unit_tests:
   stage: test
   script:
+    - go mod tidy
     - go test ./...
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^homework/

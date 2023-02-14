@@ -1,5 +1,6 @@
-package golang
+package main
 
-// func GroupAndSort(users []UserData) map[string][]UserData {
-
-// }
+func GroupAndSort(users []UserData) map[string][]UserData {
+	// implement me
+	return nil
+}

@@ -1,4 +1,4 @@
-module golang
+module rcache
 
 go 1.19
 

@@ -8,7 +8,7 @@ import (
 
 func TestEcho(t *testing.T) {
 	arg := "hello"
-	b, err := exec.Command("go", "run", "echo.go", arg).CombinedOutput()
+	b, err := exec.Command("go", "run", "main.go", arg).CombinedOutput()
 
 	if err != nil {
 		t.Error(err)

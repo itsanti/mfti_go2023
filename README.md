@@ -17,7 +17,7 @@
 
 ## Условия оценок
 
-1. Прошло CI/CD, Code Review, выполнено во время Dedline: 1.
+1. Прошло CI/CD, Code Review, выполнено во время Deadline: 1.
 2. Прошло CI/CD, Code Review, выполнено после Deadline: 0.75.
 3. Не прошло CI/CD: 0.
 4. Прошло CI/CD, не прошло Code Review: обратная связь от ревьювера в комментариях к Merge Request.

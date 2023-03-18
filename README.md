@@ -7,7 +7,7 @@
 6. Как правило, в ветках есть `main_test.go`, в который можно заглядывать.
 7. Написать решение, запустить тесты: `go test ./...`
 8. Если тесты PASS, то создать коммит и `git push -u origin homework/$NUM-$NAME`
-9. Сделать Merge Request в master
+9. Сделать Merge Requestв ветки homework/$NUM-$NAME в master
 
 # Как проверяются задания
 

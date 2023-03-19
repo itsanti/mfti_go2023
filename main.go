@@ -6,9 +6,6 @@ import "sort"
 
 func GroupAndSort(users []UserData) map[string][]UserData {
 	var res = make(map[string][]UserData, len(users))
-	if len(users) == 0 {
-		return res
-	}
 	for _, user := range users {
 		res[user.City] = append(res[user.City], user)
 	}

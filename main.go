@@ -44,7 +44,6 @@ func makeRequest(path string) ([]byte, error) {
 
 func GetPokemons() []Pokemon {
 	var data pokemonResult
-	var pokemon Pokemon
 	var pokemons []Pokemon
 	var chanPokemons = make(chan Pokemon)
 	var wg sync.WaitGroup
@@ -58,6 +57,7 @@ func GetPokemons() []Pokemon {
 	for _, item := range data.Results {
 		wg.Add(1)
 		go func(url string) {
+			var pokemon Pokemon
 			defer wg.Done()
 			jsonData, err = makeRequest(url)
 			json.Unmarshal(jsonData, &pokemon)
@@ -74,13 +74,12 @@ func GetPokemons() []Pokemon {
 		pokemons = append(pokemons, pokemon)
 	}
 
-	for _, pok := range pokemons {
-		fmt.Println(pok)
-	}
-
 	return pokemons
 }
 
 func main() {
-	GetPokemons()
+	pokemons := GetPokemons()
+	for _, pokemon := range pokemons {
+		fmt.Println(pokemon)
+	}
 }

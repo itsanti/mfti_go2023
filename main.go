@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-const API_BASE_ENDPOINT = "https://pokeapi.co/api/v2"
+const API_BASE_ENDPOINT = "https://pokeapi.co/api/v2/pokemon"
 
 type Pokemon struct {
 	ID             int    `json:"id"`
@@ -48,19 +48,29 @@ func GetPokemons() []Pokemon {
 	var chanPokemons = make(chan Pokemon)
 	var wg sync.WaitGroup
 
-	jsonData, err := makeRequest(API_BASE_ENDPOINT + "/pokemon")
+	jsonData, err := makeRequest(API_BASE_ENDPOINT)
 	if err != nil {
 		panic(err.Error())
 	}
-	json.Unmarshal(jsonData, &data)
+
+	err = json.Unmarshal(jsonData, &data)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	for _, item := range data.Results {
 		wg.Add(1)
 		go func(url string) {
 			var pokemon Pokemon
 			defer wg.Done()
-			jsonData, err = makeRequest(url)
-			json.Unmarshal(jsonData, &pokemon)
+			jsonData, err := makeRequest(url)
+			if err != nil {
+				panic(err.Error())
+			}
+			err = json.Unmarshal(jsonData, &pokemon)
+			if err != nil {
+				panic(err.Error())
+			}
 			chanPokemons <- pokemon
 		}(item.Url)
 	}

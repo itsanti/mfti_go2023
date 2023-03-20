@@ -20,7 +20,7 @@ type Pokemon struct {
 	IsDefault      bool   `json:"is_default"`
 }
 
-type pokemonResult struct {
+type pokemonsResult struct {
 	Count    int    `json:"count"`
 	Next     string `json:"next"`
 	Previous string `json:"previous"`
@@ -28,6 +28,11 @@ type pokemonResult struct {
 		Name string
 		Url  string
 	} `json:"results"`
+}
+
+type pokemonResult struct {
+	Pokemon Pokemon
+	Err     error
 }
 
 func makeRequest(path string) ([]byte, error) {
@@ -43,9 +48,9 @@ func makeRequest(path string) ([]byte, error) {
 }
 
 func GetPokemons() []Pokemon {
-	var data pokemonResult
+	var data pokemonsResult
 	var pokemons []Pokemon
-	var chanPokemons = make(chan Pokemon)
+	var chanPokemons = make(chan pokemonResult)
 	var wg sync.WaitGroup
 
 	jsonData, err := makeRequest(API_BASE_ENDPOINT)
@@ -61,17 +66,20 @@ func GetPokemons() []Pokemon {
 	for _, item := range data.Results {
 		wg.Add(1)
 		go func(url string) {
+			var item pokemonResult
 			var pokemon Pokemon
 			defer wg.Done()
 			jsonData, err := makeRequest(url)
 			if err != nil {
-				panic(err.Error())
+				item.Err = err
 			}
 			err = json.Unmarshal(jsonData, &pokemon)
 			if err != nil {
-				panic(err.Error())
+				item.Err = err
+			} else {
+				item.Pokemon = pokemon
 			}
-			chanPokemons <- pokemon
+			chanPokemons <- item
 		}(item.Url)
 	}
 
@@ -80,8 +88,11 @@ func GetPokemons() []Pokemon {
 		close(chanPokemons)
 	}()
 
-	for pokemon := range chanPokemons {
-		pokemons = append(pokemons, pokemon)
+	for item := range chanPokemons {
+		if item.Err != nil {
+			continue
+		}
+		pokemons = append(pokemons, item.Pokemon)
 	}
 
 	return pokemons

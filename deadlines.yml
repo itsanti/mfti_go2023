@@ -17,3 +17,8 @@
   start:    15-03-2023 19:00
   deadline: 22-03-2023 23:59
   score: 1
+
+- task:     retryable-http
+  start:    27-03-2023 00:01
+  deadline: 03-04-2023 23:59
+  score: 1

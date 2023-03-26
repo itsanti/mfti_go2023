@@ -15,7 +15,7 @@ func TestRetryableHTTP(t *testing.T) {
 	_ = c.Get("http://example.com:81")
 	elapsed := time.Since(start)
 	seconds := elapsed.Seconds()
-	want := timeout.Seconds() * retries
+	want := timeout.Seconds() * (retries + 1)
 	if int(seconds) != int(want) {
 		t.Errorf("elapsed == %v sec; want %v", seconds, want)
 	}

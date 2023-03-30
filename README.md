@@ -1,5 +1,10 @@
 # Pokemon API client
 
+<p align="center">
+  <img src="https://p7.hiclipart.com/preview/585/436/845/icon-pikachu-transparent-background.jpg" width=300/>
+</p>
+
+
 Написать клиент [Pokemon API v2](https://pokeapi.co/docs/v2), который собирает покемонов с эндпоинта [/pokemon](https://pokeapi.co/api/v2/pokemon/) и возвращает слайс типа `[]Pokemon`, где `Pokemon` – структура. Слайс должен содержать первые 20 покемонов.
 
 Для ознокомления с API используйте [Postman](https://www.postman.com/).

@@ -18,13 +18,13 @@
 Скопировать файл `main.go` из ветки `homework-4/pokemon-api-client`:
 
 ```
-git checkout homework-4/pokemon-api-client main.go
+git checkout homework/4-pokemon-api-client main.go
 ```
 
 Скопировать файл `main.go` из ветки `homework-5/retryable-http`:
 
 ```
-git checkout homework-5/retryable-http main.go
+git checkout homework/5-retryable-http main.go
 ```
 
 - Выполнять из ветки, в которую хотите скопировать, т.е. из текущей.

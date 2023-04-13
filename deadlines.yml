@@ -22,3 +22,8 @@
   start:    27-03-2023 00:01
   deadline: 03-04-2023 23:59
   score: 1
+
+- task:     mocking
+  start:    17-04-2023 00:01
+  deadline: 24-04-2023 23:59
+  score: 1

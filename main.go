@@ -1,15 +1,20 @@
 package main
 
-import (
-	"encoding/json"
-	"io"
-	"net/http"
-)
+type Pokemon struct {
+	BaseExperience int    `json:"base_experience"`
+	Height         int    `json:"height"`
+	ID             int    `json:"id"`
+	IsDefault      bool   `json:"is_default"`
+	Name           string `json:"name"`
+	Order          int    `json:"order"`
+	Weight         int    `json:"weight"`
+}
 
-type Pokemon struct {}
+type APIclient interface {
+	GetPokemons() []Pokemon
+}
 
-
-func GetPokemons() []Pokemon {
-	// implement me
-
+func GetAPIclient(mock bool) APIclient {
+	var a APIclient
+	return a
 }

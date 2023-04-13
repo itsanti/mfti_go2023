@@ -1,17 +1,32 @@
-# Pokemon API client
+# Mocking
 
-<img src="https://freepngimg.com/thumb/pokemon/37470-6-pikachu-transparent-background.png" width=300/>
+Напишите mocking клиент для Pokemon API.
 
+1. Создайте новую ветку из вашей локальной homework/4.
+2. Измените API клиент так, чтобы он использовал вашу реализацию HTTP клиента из homework/5 во всех запросах.
+3. Напишите mocking клиент, который будет имитировать ответ от API в юнит тесте.
 
-Написать клиент [Pokemon API v2](https://pokeapi.co/docs/v2), который собирает покемонов с эндпоинта [/pokemon](https://pokeapi.co/api/v2/pokemon/) и возвращает слайс типа `[]Pokemon`, где `Pokemon` – структура. Слайс должен содержать первые 20 покемонов.
+## Как перенести свой код в текущую ветку.
 
-Для ознокомления с API используйте [Postman](https://www.postman.com/).
+1. В файле main.go текущей ветки есть минимальный код. Его анализ может быть полезен.
+2. В любом случае, вы будете работать с вашей собственной реализацией предыдущих задач.
+3. Вы можете скопировать свой код из необходимых веток вручную.
+4. Или вы можете использовать git.
 
-Ограничить структуру `Pokemon` следующими полями:
-* base_experience
-* height
-* id
-* is_default
-* name
-* order
-* weight
+### Git
+
+Скопировать файл `main.go` из ветки `homework-4/pokemon-api-client`:
+
+```
+git checkout homework-4/pokemon-api-client main.go
+```
+
+Скопировать файл `main.go` из ветки `homework-5/retryable-http`:
+
+```
+git checkout homework-5/retryable-http main.go
+```
+
+- Выполнять из ветки, в которую хотите скопировать, т.е. из текущей.
+- Помните, что при этом вы перезапишите файл main.go, поэтому, сохраните его под другим именем, если необходимо.
+- Не копируйте файлы с тестами из других веток.

@@ -1,3 +1,3 @@
-module gitlab.atp-fivt.org/courses/homework-solutions/pokemon-api-client
+module gitlab.atp-fivt.org/courses/homeworks/mocking
 
 go 1.19

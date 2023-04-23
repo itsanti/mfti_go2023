@@ -1,14 +1,9 @@
 package main
 
-type Pokemon struct {
-	BaseExperience int    `json:"base_experience"`
-	Height         int    `json:"height"`
-	ID             int    `json:"id"`
-	IsDefault      bool   `json:"is_default"`
-	Name           string `json:"name"`
-	Order          int    `json:"order"`
-	Weight         int    `json:"weight"`
-}
+import (
+	"fmt"
+	"time"
+)
 
 type APIclient interface {
 	GetPokemons() []Pokemon
@@ -16,5 +11,23 @@ type APIclient interface {
 
 func GetAPIclient(mock bool) APIclient {
 	var a APIclient
+
+	if mock {
+		a = MockingHTTPclient{Count: 3}
+	} else {
+		const timeout = 2 * time.Second
+		const retries = 3
+		const debug = false
+		a = RetryableHTTPclient{Timeout: timeout, Retries: retries, Debug: debug}
+	}
 	return a
+}
+
+func main() {
+	var mocking bool
+	mocking = true
+	pokemons := GetAPIclient(mocking).GetPokemons()
+	for _, pokemon := range pokemons {
+		fmt.Println(pokemon)
+	}
 }

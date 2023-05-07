@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sync"
+	"time"
 )
 
-const API_BASE_ENDPOINT = "https://pokeapi.co/api/v2/pokemon"
+const API_START_URL = "https://pokeapi.co/api/v2/pokemon/?limit=100&offset=0"
+const PAGE_COUNT = 10
 
 type Pokemon struct {
 	ID             int    `json:"id"`
@@ -48,39 +50,60 @@ func makeRequest(path string) ([]byte, error) {
 }
 
 func GetPokemons() []Pokemon {
-	var data pokemonsResult
 	var pokemons []Pokemon
 	var chanPokemons = make(chan pokemonResult)
+	var nextURL = make(chan string, 20)
 	var wg sync.WaitGroup
 
-	jsonData, err := makeRequest(API_BASE_ENDPOINT)
-	if err != nil {
-		panic(err.Error())
-	}
+	nextURL <- API_START_URL
 
-	err = json.Unmarshal(jsonData, &data)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	for _, item := range data.Results {
+	for i := 0; i < PAGE_COUNT; i++ {
 		wg.Add(1)
-		go func(url string) {
-			var item pokemonResult
-			var pokemon Pokemon
+		go func() {
 			defer wg.Done()
+			var data pokemonsResult
+
+			url := <-nextURL
+			if url == "" {
+				return
+			}
+
 			jsonData, err := makeRequest(url)
 			if err != nil {
-				item.Err = err
+				panic(err.Error())
 			}
-			err = json.Unmarshal(jsonData, &pokemon)
+
+			err = json.Unmarshal(jsonData, &data)
 			if err != nil {
-				item.Err = err
-			} else {
-				item.Pokemon = pokemon
+				panic(err.Error())
 			}
-			chanPokemons <- item
-		}(item.Url)
+
+			if data.Next != "" {
+				nextURL <- data.Next
+			} else {
+				close(nextURL)
+			}
+
+			for _, item := range data.Results {
+				wg.Add(1)
+				go func(url string) {
+					var item pokemonResult
+					var pokemon Pokemon
+					defer wg.Done()
+					jsonData, err := makeRequest(url)
+					if err != nil {
+						item.Err = err
+					}
+					err = json.Unmarshal(jsonData, &pokemon)
+					if err != nil {
+						item.Err = err
+					} else {
+						item.Pokemon = pokemon
+					}
+					chanPokemons <- item
+				}(item.Url)
+			}
+		}()
 	}
 
 	go func() {
@@ -99,8 +122,9 @@ func GetPokemons() []Pokemon {
 }
 
 func main() {
+	start := time.Now()
 	pokemons := GetPokemons()
-	for _, pokemon := range pokemons {
-		fmt.Println(pokemon)
-	}
+	s := int(time.Since(start).Seconds())
+	fmt.Println(len(pokemons))
+	fmt.Printf("GetPokemons time: %vs.\n", s/1000000)
 }

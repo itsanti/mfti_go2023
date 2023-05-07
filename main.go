@@ -10,7 +10,6 @@ import (
 )
 
 const API_START_URL = "https://pokeapi.co/api/v2/pokemon/?limit=100&offset=0"
-const PAGE_COUNT = 5
 
 type Pokemon struct {
 	ID             int    `json:"id"`
@@ -49,70 +48,73 @@ func makeRequest(path string) ([]byte, error) {
 	return body, err
 }
 
-func GetPokemonsPages(wg *sync.WaitGroup, chanPokemons chan pokemonResult) {
+func GetPokemonsPages(wg *sync.WaitGroup, outPokemons chan<- pokemonsResult) {
 	defer wg.Done()
 
-	var nextURL = make(chan string, 20)
+	var nextURL = make(chan string, 1)
 	nextURL <- API_START_URL
 
-	for i := 0; i < PAGE_COUNT; i++ {
+	for url := range nextURL {
 		wg.Add(1)
-		go func() {
+		go func(url string) {
 			defer wg.Done()
 			var data pokemonsResult
-
-			url := <-nextURL
-
 			if url == "" {
-				return
-			}
-
-			jsonData, err := makeRequest(url)
-			if err != nil {
-				panic(err.Error())
-			}
-
-			err = json.Unmarshal(jsonData, &data)
-			if err != nil {
-				panic(err.Error())
-			}
-
-			if data.Next != "" {
-				nextURL <- data.Next
-			} else {
 				close(nextURL)
-			}
+				close(outPokemons)
+			} else {
+				jsonData, err := makeRequest(url)
+				if err != nil {
+					panic(err.Error())
+				}
 
-			for _, item := range data.Results {
-				wg.Add(1)
-				go func(url string) {
-					var item pokemonResult
-					var pokemon Pokemon
-					defer wg.Done()
-					jsonData, err := makeRequest(url)
-					if err != nil {
-						item.Err = err
-					}
-					err = json.Unmarshal(jsonData, &pokemon)
-					if err != nil {
-						item.Err = err
-					} else {
-						item.Pokemon = pokemon
-					}
-					chanPokemons <- item
-				}(item.Url)
+				err = json.Unmarshal(jsonData, &data)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				outPokemons <- data
+				nextURL <- data.Next
 			}
-		}()
+		}(url)
+	}
+
+}
+
+func GetPokemonPage(wg *sync.WaitGroup, inPokemons <-chan pokemonsResult, outPokemon chan<- pokemonResult) {
+	for data := range inPokemons {
+		for _, item := range data.Results {
+			wg.Add(1)
+			go func(url string) {
+				var item pokemonResult
+				var pokemon Pokemon
+				defer wg.Done()
+				jsonData, err := makeRequest(url)
+				if err != nil {
+					item.Err = err
+				}
+				err = json.Unmarshal(jsonData, &pokemon)
+				if err != nil {
+					item.Err = err
+				} else {
+					item.Pokemon = pokemon
+				}
+				outPokemon <- item
+			}(item.Url)
+		}
 	}
 }
 
 func GetPokemons() []Pokemon {
 	var pokemons []Pokemon
-	var chanPokemons = make(chan pokemonResult)
 	var wg sync.WaitGroup
 
+	var chanPokemonsResult = make(chan pokemonsResult)
+	var chanPokemons = make(chan pokemonResult)
+
 	wg.Add(1)
-	go GetPokemonsPages(&wg, chanPokemons)
+	go GetPokemonsPages(&wg, chanPokemonsResult)
+	go GetPokemonPage(&wg, chanPokemonsResult, chanPokemons)
 
 	go func() {
 		wg.Wait()
@@ -133,6 +135,7 @@ func main() {
 	start := time.Now()
 	pokemons := GetPokemons()
 	s := float64(time.Since(start).Microseconds())
+
 	fmt.Println(len(pokemons))
 	fmt.Printf("GetPokemons time: %gs.\n", s/1000000)
 }

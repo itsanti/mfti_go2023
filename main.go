@@ -10,7 +10,7 @@ import (
 )
 
 const API_START_URL = "https://pokeapi.co/api/v2/pokemon/?limit=100&offset=0"
-const PAGE_COUNT = 10
+const PAGE_COUNT = 5
 
 type Pokemon struct {
 	ID             int    `json:"id"`
@@ -49,12 +49,10 @@ func makeRequest(path string) ([]byte, error) {
 	return body, err
 }
 
-func GetPokemons() []Pokemon {
-	var pokemons []Pokemon
-	var chanPokemons = make(chan pokemonResult)
-	var nextURL = make(chan string, 20)
-	var wg sync.WaitGroup
+func GetPokemonsPages(wg *sync.WaitGroup, chanPokemons chan pokemonResult) {
+	defer wg.Done()
 
+	var nextURL = make(chan string, 20)
 	nextURL <- API_START_URL
 
 	for i := 0; i < PAGE_COUNT; i++ {
@@ -64,6 +62,7 @@ func GetPokemons() []Pokemon {
 			var data pokemonsResult
 
 			url := <-nextURL
+
 			if url == "" {
 				return
 			}
@@ -105,6 +104,15 @@ func GetPokemons() []Pokemon {
 			}
 		}()
 	}
+}
+
+func GetPokemons() []Pokemon {
+	var pokemons []Pokemon
+	var chanPokemons = make(chan pokemonResult)
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go GetPokemonsPages(&wg, chanPokemons)
 
 	go func() {
 		wg.Wait()
@@ -124,7 +132,7 @@ func GetPokemons() []Pokemon {
 func main() {
 	start := time.Now()
 	pokemons := GetPokemons()
-	s := int(time.Since(start).Seconds())
+	s := float64(time.Since(start).Microseconds())
 	fmt.Println(len(pokemons))
-	fmt.Printf("GetPokemons time: %vs.\n", s/1000000)
+	fmt.Printf("GetPokemons time: %gs.\n", s/1000000)
 }

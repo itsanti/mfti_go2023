@@ -32,3 +32,8 @@
   start:    02-05-2023 00:01
   deadline: 09-05-2023 23:59
   score: 1
+
+- task:     pokemon-rest-api
+  start:    10-05-2023 00:01
+  deadline: 17-05-2023 23:59
+  score: 1

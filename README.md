@@ -7,7 +7,7 @@
 
 - https://github.com/julienschmidt/httprouter
 - https://github.com/go-gorm/gorm
-- Структура Pokemon из [homework/4](https://gitlab.atp-fivt.org/courses-public/golang/homeworks/-/tree/homework/4-pokemon-api-client)
+- Структура Pokemon лежит в `listing.pokemon`
 - Возвращать правильные HTTP статусы (см. тесты)
 - Сервер слушает порт 8080
 

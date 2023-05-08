@@ -8,8 +8,9 @@ import (
 	"os/exec"
 	"testing"
 
+	"pokemon-rest-api/listing"
+
 	client "github.com/anatolio-deb/pokemon-async-client"
-	"gitlab.atp-fivt.org/courses/homework-solutions/-/tree/homework/8-populate-pokemon-server/listing"
 )
 
 func TestAddPokemon(t *testing.T) {

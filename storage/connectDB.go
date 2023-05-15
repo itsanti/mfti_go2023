@@ -1,4 +1,4 @@
-package init
+package storage
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"pokemon-rest-api/listing"
 )
 
 type Config struct {
@@ -26,7 +28,7 @@ var config = Config{
 
 var DB *gorm.DB
 
-func ConnectDB() {
+func connectDB() {
 	var err error
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
@@ -42,4 +44,10 @@ func ConnectDB() {
 		log.Fatal("Failed to connect to the Database")
 	}
 	fmt.Println("? Connected Successfully to the Database")
+}
+
+func InitDB() {
+	connectDB()
+	DB.AutoMigrate(&listing.Pokemon{})
+	fmt.Println("? Migration complete")
 }

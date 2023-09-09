@@ -1,15 +1,10 @@
-image: golang:latest
-
-stages:
-  - test
-
-unit_tests:
-  stage: test
+test:
+  variables:
+    POSTGRES_PASSWORD: postgres
+  image: golang:latest
+  services:
+    - postgres:latest
   script:
-    - apt update
-    - apt install postgresql postgresql-contrib sudo -y
-    - sudo service postgresql start
-    - sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
     - go mod tidy
     - go test ./...
   rules:
